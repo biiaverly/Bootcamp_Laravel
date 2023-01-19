@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\CriarController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EventosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +18,15 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/produtos', function () {   
+    $busca = request('search');
+    return view('produtos', ['busca' => $busca]);});
+
+Route::get('/criarevento', function () {
+    return view('criarevento');
+});
+
+Route::get('/eventos',[EventosController::class,'index']);
+Route::get('/criar',[CriarController::class,'index']);
+
