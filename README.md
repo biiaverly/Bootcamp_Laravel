@@ -126,8 +126,6 @@ php artisan route:list -> visão geral das routes definidas
 php artisan route:list -v ->exibir o middleware de rota adicionando
 php artisan route:list --path=api -> começam com determinado uri
 ```
-
-
 ## 2.2 - Parâmetros de rota
 ### Parâmetros Necessários
 Às vezes, você precisará capturar segmentos do URI em sua rota.
@@ -268,12 +266,97 @@ Route::name('admin.')->group(function () {
 });
 ```
 
-## 3 - Proteção CSRF(Cross-site request forgery)
+## 3 - Proteção CSRF(Cross-site request forgery) - incompleto
 Imagine que seu aplicativo tenha um /user/emailrota que aceita um POSTsolicitação para alterar o endereço de e-mail do usuário autenticado. Muito provavelmente, esta rota espera um emailcampo de entrada para conter o endereço de e-mail que o usuário gostaria de começar a usar. 
 Sem proteção CSRF, um site mal-intencionado pode criar um formulário HTML que aponta para o endereço do seu aplicativo /user/emailroute e envia o próprio endereço de e-mail do usuário mal-intencionado: 
 Para evitar essa vulnerabilidade, precisamos inspecionar todas as entradas POST, PUT, PATCH, ou DELETEsolicitação de um valor de sessão secreta que o aplicativo mal-intencionado não consegue acessar. 
 
 
+
+## 4.0 - Migrations
+As migrações são como o controle de versão do seu banco de dados, permitindo que sua equipe defina e compartilhe a definição do esquema do banco de dados do aplicativo.
+### 4.1 - Estrutura
+Uma classe de migração contém dois métodos: upe down. o upmétodo é usado para adicionar novas tabelas, colunas ou índices ao seu banco de dados, enquanto o downmétodo deve inverter as operações realizadas pelo upmétodo. 
+```php
+<?php
+ 
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+ 
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('flights', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('airline');
+            $table->timestamps();
+        });
+    }
+ 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::drop('flights');
+    }
+};
+```
+
+### 4.2 - Comandos artisan
+```  
+
+php artisan migrate:
+executar as migrações
+
+php artisan migrate:status:
+verifica as migrações
+
+php artisan migrate --pretend:
+ver as instruções SQL que serão executadas pelas migrações sem realmente executá-la
+
+php artisan migrate --isolated:
+vários servidores e executando migrações como parte do processo de implantação, provavelmente não deseja que dois servidores tentem migrar o banco de dados ao mesmo tempo.
+
+php artisan migrate --force 
+forçar migração
+
+php artisan migrate:rollback
+reverter ultima migração
+
+
+php artisan migrate:rollback --step=5
+
+php artisan migrate:reset
+reverter todas as migrações
+
+```
+
+
+### 4.3 - Tabelas
+Para criar uma tabela utilize:
+
+php artisan make:migration nome_tabela
+
+#### Eloquent:
+
+O Laravel inclui o Eloquent, um mapeador objeto-relacional (ORM) que torna agradável a interação com seu banco de dados. Ao usar o Eloquent, cada tabela de banco de dados possui um "Modelo" correspondente que é usado para interagir com essa tabela. Além de recuperar registros da tabela do banco de dados, os modelos Eloquent também permitem inserir, atualizar e excluir registros da tabela. 
+
+php artisan make:model Flight
+
+Se você deseja gerar uma migração de banco de dados ao gerar o modelo, pode usar o --migrationou -mopção:
+
+php artisan make:model Flight --migration
 
 ## 3 - Controllers
 Os controladores podem agrupar a lógica de tratamento de solicitações relacionadas em uma única classe. Por exemplo, um UserControllerA classe pode lidar com todas as solicitações recebidas relacionadas aos usuários, incluindo exibição, criação, atualização e exclusão de usuários. Por padrão, os controladores são armazenados no app/Http/Controllersdiretório.

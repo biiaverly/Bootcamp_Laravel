@@ -3,6 +3,8 @@
 @section('title',"Eventos")
 
 @section('content')
-  <h1>Tela de Eventos</h1>
 
+  @foreach ($eventos as $event)
+    <p> {{$event->title}} | {{$event->descrição}} </p>
+    @endforeach
 @endsection
